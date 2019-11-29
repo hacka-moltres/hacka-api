@@ -1,1 +1,5 @@
-export const RABBIT_DSN = process.env.RABBIT_DSN || 'amqp://dohbyexy:hnBxfL8FzHrwAZ37k7-JyMxeOcVEoqPD@eagle.rmq.cloudamqp.com/dohbyexy';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
+export const RABBIT_DSN = process.env.RABBIT_DSN;
