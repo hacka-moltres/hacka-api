@@ -1,5 +1,6 @@
 import * as amqplib from 'amqplib';
-import { RABBIT_DSN } from 'configs';
+
+import { RABBIT_DSN } from './configs';
 
 const resolveConnection = getChannel();
 resolveConnection
@@ -12,6 +13,7 @@ export enum enQueue {
 }
 
 export async function sendToQueue(queue: enQueue, message: ISession) {
+  console.table(message);
   const [channel] = await resolveConnection;
   return channel.sendToQueue(queue, Buffer.from(JSON.stringify(message)));
 }

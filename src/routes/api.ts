@@ -6,9 +6,7 @@ import { schema } from './../validator/schema';
 
 const router = express.Router();
 
-router.get('/', async (req: express.Request, res: express.Response) => {
-  console.clear();
-  console.log(req.body);
+router.post('/', async (req: express.Request, res: express.Response) => {
   const isValid = Joi.validate(req.body, schema, {
     abortEarly: false,
     stripUnknown: { objects: true, arrays: true } as any,
@@ -20,18 +18,18 @@ router.get('/', async (req: express.Request, res: express.Response) => {
     return;
   }
 
-  sendToQueue(enQueue.processDataInit, {
-    sessionId: req.body.sessionId,
-    fingerprint: req.body.fingerprint,
-    tags: req.body.tags,
-  } as ISession);
-  res.status(200).send(true);
+  const ip = (req.headers['x-forwarded-for'] || req.connection.remoteAddress).toString();
+  req.body.tags.push(`ip:${ip.split(':').pop()}`);
+
+  sendToQueue(enQueue.processDataInit, req.body as ISession);
+
+  res.status(200).send({});
   return;
 });
 
-router.get('/test', async (req: express.Request, res: express.Response) => {
+router.get('/ping', async (res: express.Response) => {
   sendToQueue(enQueue.processDataInit, {} as ISession);
-  res.status(200).send('chegou');
+  res.status(200).send('pong');
 });
 
 export default router;
