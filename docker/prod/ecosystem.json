@@ -1,8 +1,0 @@
-{
-  "apps": [{
-    "name": "api",
-    "script": "bin/server.js",
-    "watch": false,
-    "exec_mode": "cluster"
-  }]
-}

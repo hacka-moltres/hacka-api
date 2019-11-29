@@ -1,28 +1,19 @@
 FROM node:12
+WORKDIR /src
 
-COPY docker/prod/ecosystem.json /dist/ecosystem.json
-COPY docker/prod/start.sh /dist/start.sh
-ADD . /src
+COPY package.json yarn.lock /src/
+RUN yarn install --production --force \
+  && mv node_modules node_modules_prod \
+  && yarn
+
+COPY . /src
+RUN yarn compile
+
+FROM node:12-alpine
 
 WORKDIR /src
 
-RUN yarn install
-RUN yarn test
-RUN yarn install --production --force
-
-RUN ls /dist -al \
-    && mv /src/bin /dist/bin \
-    && mv /src/node_modules /dist/node_modules \
-    && mv /src/package.json /dist/package.json \
-    && ls /dist -al
-
-# Cria uma segunda imagem mais leve com os arquivos compilados
-FROM node:12-alpine
-
-EXPOSE 3000
-
-COPY --from=0 /dist /var/www
-
-RUN npm install -g pm2
-
-WORKDIR /var/www
+COPY --from=0 /src/bin /src/bin
+COPY --from=0 /src/node_modules_prod /src/bin/node_modules
+COPY --from=0 /src/package.json /src/package.json
+CMD yarn start
