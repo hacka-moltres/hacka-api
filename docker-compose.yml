@@ -1,0 +1,13 @@
+version: '2'
+services:
+  web:
+    build: docker/dev
+    ports:
+      - "3001:3000"
+      - "5859:5859"
+    environment:
+      - NODE_ENV=development
+      - DNS=http://localhost:3000
+      - SENTRY_KEY=
+    volumes:
+      - .:/src:cached
