@@ -11,7 +11,8 @@ curl -X POST \
   -H 'cache-control: no-cache' \
   -d '{
     "sessionId": "dfghjklç",
-    "fingerprint": "eeeee",
+    "email":null,
+    "phone":null,
     "tags": [
         "asdasd",
         "asdasda"

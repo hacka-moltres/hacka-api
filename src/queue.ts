@@ -13,8 +13,9 @@ export enum enQueue {
 }
 
 export async function sendToQueue(queue: enQueue, message: ISession) {
-  console.table(message);
+  console.info(message);
   const [channel] = await resolveConnection;
+  // return channel.publish('hacka', queue, Buffer.from(JSON.stringify(message)));
   return channel.sendToQueue(queue, Buffer.from(JSON.stringify(message)));
 }
 
