@@ -19,9 +19,18 @@ router.post('/', async (req: express.Request, res: express.Response) => {
   }
 
   const ip = (req.headers['x-forwarded-for'] || req.connection.remoteAddress).toString();
-  req.body.tags.push(`ip:${ip.split(':').pop()}`);
 
-  sendToQueue(enQueue.processDataInit, req.body as ISession);
+  const data: ISession = req.body;
+
+  const tags: string[] = [
+    `ip:${ip.split(':').pop()}`,
+    `timestamp:${Date.now()}`,
+    `datetime:${(new Date).toLocaleDateString()}`,
+  ];
+
+  data.tags.push(...tags);
+
+  sendToQueue(enQueue.processDataInit, data);
 
   res.status(200).send({});
   return;
