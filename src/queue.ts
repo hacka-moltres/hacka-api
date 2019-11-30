@@ -9,7 +9,7 @@ resolveConnection
   });
 
 export enum enQueue {
-  processDataInit = 'processo.data.init',
+  processDataInit = 'process.data.init',
 }
 
 export async function sendToQueue(queue: enQueue, message: ISession) {
@@ -21,9 +21,7 @@ export async function sendToQueue(queue: enQueue, message: ISession) {
 async function getChannel(): Promise<[amqplib.Channel, amqplib.Connection]> {
   const connection = await amqplib.connect(RABBIT_DSN);
   const channel = await connection.createChannel();
-
-  await channel.assertQueue(enQueue.processDataInit, { durable: true });
-  await channel.assertQueue(enQueue.processDataInit + '.nack', { durable: true });
+  await channel.assertExchange('hacka', 'topic', { durable: true });
 
   return [channel, connection];
 }
