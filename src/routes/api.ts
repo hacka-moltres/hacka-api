@@ -18,10 +18,8 @@ router.post('/', async (req: express.Request, res: express.Response) => {
     return;
   }
 
-  const ip = (req.headers['x-forwarded-for'] || req.connection.remoteAddress).toString();
-
   const data: ISession = req.body;
-
+  const ip = (req.headers['x-forwarded-for'] || req.connection.remoteAddress).toString();
   const tags: string[] = [
     `ip:${ip.split(':').pop()}`,
     `timestamp:${Date.now()}`,
