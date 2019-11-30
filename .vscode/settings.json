@@ -12,6 +12,7 @@
   "editor.formatOnPaste": true,
   "editor.formatOnSave": true,
   "editor.formatOnType": true,
+  "files.autoSave": "off",
   "eslint.validate": [
     "javascript",
     "javascriptreact",

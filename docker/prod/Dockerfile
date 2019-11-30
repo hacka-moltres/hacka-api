@@ -1,4 +1,4 @@
-FROM node:12
+FROM node:10-slim
 WORKDIR /src
 
 COPY package.json yarn.lock /src/
@@ -9,7 +9,7 @@ RUN yarn install --production --force \
 COPY . /src
 RUN yarn compile
 
-FROM node:12-alpine
+FROM node:10-slim
 
 WORKDIR /src
 
