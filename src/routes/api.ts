@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import * as express from 'express';
 import * as Joi from 'joi';
 import { UAParser } from 'ua-parser-js';
@@ -27,15 +28,18 @@ router.post('/', async (req: express.Request, res: express.Response) => {
   const browserVersionNumber = browserVersion && Number(browserVersion);
   const browserName = parser.setUA(ua).getBrowser().name;
   const ip = (req.headers['x-forwarded-for'] || req.connection.remoteAddress).toString();
+  const date = Date.now();
 
   const tags: string[] = [
     `ip:${ip.split(':').pop()}`,
-    `timestamp:${Date.now()}`,
+    `timestamp:${date}`,
     `datetime:${(new Date).toLocaleDateString()}`,
     `browserName:${browserName}`,
     `browserVersionNumber:${browserVersionNumber}`,
   ];
 
+  data.date = date;
+  data.dateTime = format(new Date(), 'yyyy-MM-dd HH:mm:ss');
   data.tags.push(...tags);
 
   sendToQueue(enQueue.processDataInit, data);
