@@ -3,8 +3,10 @@ import * as express from 'express';
 import * as Joi from 'joi';
 import { UAParser } from 'ua-parser-js';
 
+import { findByEmailOrPhone, findTagsByUser } from './../elastic';
 import { enQueue, sendToQueue } from './../queue';
 import { schema } from './../validator/schema';
+import { search } from './../validator/search';
 
 const router = express.Router();
 
@@ -45,6 +47,27 @@ router.post('/', async (req: express.Request, res: express.Response) => {
   sendToQueue(enQueue.processDataInit, data);
 
   res.status(200).send({});
+  return;
+});
+
+router.post('/find', async (req: express.Request, res: express.Response) => {
+  const isValid = Joi.validate(req.body, search, {
+    abortEarly: false,
+    stripUnknown: { objects: true, arrays: true } as any,
+  });
+
+  if (!!isValid.error) {
+    const { message, details } = isValid.error;
+    res.status(400).send({ message, details });
+    return;
+  }
+
+  const result = await findByEmailOrPhone(req.body.search);
+  const userIds = result.total > 0 && result.hits.map((key: { _id: string; }) => key._id);
+
+  res.status(200).json(
+    await findTagsByUser(userIds)
+  );
   return;
 });
 
