@@ -67,17 +67,24 @@ export async function findTagsByUser(userIds: string[]): Promise<any> {
       body: {
         query: {
           bool: {
-            filter: {
-              terms: {
-                userIndex: userIds
+            must: [
+              {
+                // eslint-disable-next-line camelcase
+                query_string: {
+                  query: `userIndex:(${userIds.join(' ')})`,
+                  // eslint-disable-next-line camelcase
+                  analyze_wildcard: true,
+                  // eslint-disable-next-line camelcase
+                  default_field: '*'
+                }
               }
-            }
+            ]
           }
         }
       }
     };
     const result = await elastic.search(data);
-    return result.body;
+    return result.body.hits.hits;
   } catch (e) {
     console.error(e);
     return null;
