@@ -32,16 +32,15 @@ router.post('/', async (req: express.Request, res: express.Response) => {
   const ip = (req.headers['x-forwarded-for'] || req.connection.remoteAddress).toString();
   const date = Date.now();
 
+  data.date = date;
+  data.dateTime = format(new Date(), 'yyyy-MM-dd HH:mm:ss');
   const tags: string[] = [
     `ip:${ip.split(':').pop()}`,
     `timestamp:${date}`,
-    `datetime:${(new Date).toLocaleDateString()}`,
+    `datetime:${data.dateTime}`,
     `browserName:${browserName}`,
     `browserVersionNumber:${browserVersionNumber}`,
   ];
-
-  data.date = date;
-  data.dateTime = format(new Date(), 'yyyy-MM-dd HH:mm:ss');
   data.tags.push(...tags);
 
   sendToQueue(enQueue.processDataInit, data);
