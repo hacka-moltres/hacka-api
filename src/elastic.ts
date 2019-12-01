@@ -80,7 +80,8 @@ export async function findTagsByUser(userIds: string[]): Promise<any> {
               }
             ]
           }
-        }
+        },
+        size: 1000
       }
     };
     const result = await elastic.search(data);
